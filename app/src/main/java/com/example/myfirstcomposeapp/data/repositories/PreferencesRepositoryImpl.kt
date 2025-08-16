@@ -25,4 +25,12 @@ class PreferencesRepositoryImpl(
             putBoolean(PREF_LOGIN_STATE,state)
         }
     }
+
+    override fun getLoginState(): Boolean {
+        return sharedPreferences.getBoolean(PREF_LOGIN_STATE, true)
+    }
+
+    override fun getName(): String {
+        return sharedPreferences.getString(PREF_NAME, "") ?: ""
+    }
 }

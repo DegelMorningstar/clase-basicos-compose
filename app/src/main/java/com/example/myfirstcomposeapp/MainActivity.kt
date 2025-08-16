@@ -7,6 +7,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
+import com.example.myfirstcomposeapp.data.repositories.PreferencesRepositoryImpl
 import com.example.myfirstcomposeapp.data.repositories.PreferencesRepositoryImpl.Companion.PREF_INSTANCE
 import com.example.myfirstcomposeapp.data.repositories.PreferencesRepositoryImpl.Companion.PREF_LOGIN_STATE
 import com.example.myfirstcomposeapp.data.repositories.PreferencesRepositoryImpl.Companion.PREF_NAME
@@ -19,8 +20,9 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         Log.i("MainActivity", "onCreate called")
         val preferences = getSharedPreferences(PREF_INSTANCE, MODE_PRIVATE)
-        val loginState : Boolean = preferences.getBoolean(PREF_LOGIN_STATE,true)
-        val userName : String = preferences.getString(PREF_NAME,"") ?: ""
+        val repository = PreferencesRepositoryImpl(preferences)
+        val loginState : Boolean = repository.getLoginState()
+        val userName : String = repository.getName()
         enableEdgeToEdge()
         setContent {
             val navController = rememberNavController()

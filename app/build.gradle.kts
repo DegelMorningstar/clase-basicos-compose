@@ -42,6 +42,9 @@ android {
 
 dependencies {
     val nav_version = "2.9.2"
+    val room_version = "2.7.2"
+
+    implementation("androidx.room:room-runtime:${room_version}")
     implementation("androidx.navigation:navigation-compose:$nav_version")
     // JSON serialization library, works with the Kotlin serialization plugin
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")

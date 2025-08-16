@@ -8,7 +8,7 @@ interface UsersApi {
     @GET("api/")
     suspend fun getUser(): UserListResponse
 
-    @GET("api/?results=10")
+    @GET("ap")
     suspend fun getUsers(): UserListResponse
 
     @GET("api/?gender=female")
