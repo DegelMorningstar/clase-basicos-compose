@@ -1,24 +1,26 @@
 package com.example.myfirstcomposeapp.data.repositories
 
-import com.example.myfirstcomposeapp.data.dto.User
+import android.util.Log
+import com.example.myfirstcomposeapp.data.dto.UserDTO
 import com.example.myfirstcomposeapp.data.api.UsersApi
 import com.example.myfirstcomposeapp.domain.repositories.UserRepository
 
 class UserRepositoryImpl(private val api: UsersApi) : UserRepository {
 
-    override suspend fun obtenerTodosLosUsuarios():List<User> {
+    override suspend fun obtenerTodosLosUsuarios():List<UserDTO> {
+        Log.i("UserRepositoryImpl", "Fetching all users from remote API")
         return api.getUsers().results
     }
 
-    override suspend fun obtenerUsuario(): User {
+    override suspend fun obtenerUsuario(): UserDTO {
         return api.getUser().results.first()
     }
 
-    override suspend fun obtenerUsuariosFemeninos():List<User> {
+    override suspend fun obtenerUsuariosFemeninos():List<UserDTO> {
         return api.getFemaleUsers().results
     }
 
-    override suspend fun obtenerUsuariosMexicanos():List<User> {
+    override suspend fun obtenerUsuariosMexicanos():List<UserDTO> {
         return api.getMexicanUsers().results
     }
 

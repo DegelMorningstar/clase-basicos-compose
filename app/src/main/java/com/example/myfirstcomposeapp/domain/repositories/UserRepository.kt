@@ -1,10 +1,10 @@
 package com.example.myfirstcomposeapp.domain.repositories
 
-import com.example.myfirstcomposeapp.data.dto.User
+import com.example.myfirstcomposeapp.data.dto.UserDTO
 
 interface UserRepository {
-    suspend fun obtenerTodosLosUsuarios():List<User>
-    suspend fun obtenerUsuario(): User
-    suspend fun obtenerUsuariosFemeninos():List<User>
-    suspend fun obtenerUsuariosMexicanos():List<User>
+    suspend fun obtenerTodosLosUsuarios():List<UserDTO>
+    suspend fun obtenerUsuario(): UserDTO
+    suspend fun obtenerUsuariosFemeninos():List<UserDTO>
+    suspend fun obtenerUsuariosMexicanos():List<UserDTO>
 }

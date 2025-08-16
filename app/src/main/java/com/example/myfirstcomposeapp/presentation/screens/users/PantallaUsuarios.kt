@@ -17,19 +17,25 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -37,6 +43,8 @@ import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
+import com.example.myfirstcomposeapp.data.api.ApiFactory
+import com.example.myfirstcomposeapp.data.db.UserDatabase
 import com.example.myfirstcomposeapp.presentation.components.UiState
 import com.example.myfirstcomposeapp.data.dto.Coordinates
 import com.example.myfirstcomposeapp.data.dto.DataAge
@@ -47,22 +55,33 @@ import com.example.myfirstcomposeapp.data.dto.Name
 import com.example.myfirstcomposeapp.data.dto.Picture
 import com.example.myfirstcomposeapp.data.dto.Street
 import com.example.myfirstcomposeapp.data.dto.Timezone
-import com.example.myfirstcomposeapp.data.dto.User
+import com.example.myfirstcomposeapp.data.dto.UserDTO
+import com.example.myfirstcomposeapp.data.repositories.LocalUserRepositoryImpl
+import com.example.myfirstcomposeapp.data.repositories.UserRepositoryImpl
+import com.example.myfirstcomposeapp.domain.models.UserModel
+import com.example.myfirstcomposeapp.domain.useCase.GetAllUsersUseCase
 import com.example.myfirstcomposeapp.presentation.theme.AppTheme
 import com.example.myfirstcomposeapp.presentation.theme.backgroundColor
 import com.example.myfirstcomposeapp.presentation.theme.surfaceColor
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun PantallaUsuarios(
     modifier: Modifier = Modifier,
     name: String,
-    onClickUsuario: (User) -> Unit
+    onClickUsuario: (UserModel) -> Unit
 ) {
-
-    val viewModel: UserViewModel = viewModel(factory = UserViewModelFactory(UserContainer.useCase))
+    val context = LocalContext.current
+    val api = remember { ApiFactory.getApiService() }
+    val db = remember { UserDatabase.getInstance(context = context) }
+    val remoteRepository = remember { UserRepositoryImpl(api) }
+    val localRepository = remember { LocalUserRepositoryImpl(db) }
+    val useCase = remember { GetAllUsersUseCase(remoteRepository,localRepository) }
+    val viewModel: UserViewModel = viewModel(factory = UserViewModelFactory(useCase))
 
     LaunchedEffect(true) {
-        viewModel.consultarUsuarios()
+        viewModel.consultarUsuarios(false)
     }
 
     val estado by viewModel.uiState.collectAsState()
@@ -71,18 +90,26 @@ fun PantallaUsuarios(
         modifier = modifier,
         estado = estado,
         name = name,
-        onClickUsuario = onClickUsuario
+        onClickUsuario = onClickUsuario,
+        onUpdateUsers = {
+            viewModel.consultarUsuarios(true)
+        }
     )
 
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PantallaUsuariosBody(
     modifier: Modifier = Modifier,
     estado: UiState,
     name: String,
-    onClickUsuario: (User) -> Unit
+    onClickUsuario: (UserModel) -> Unit,
+    onUpdateUsers: () -> Unit,
 ) {
+    val refreshState = remember { mutableStateOf(false) }
+    val coroutineScope = rememberCoroutineScope()
+
     Surface(color = surfaceColor, modifier = modifier.fillMaxSize()) {
         Column(modifier = modifier
             .fillMaxSize()
@@ -107,12 +134,24 @@ fun PantallaUsuariosBody(
                     }
                 }
                 is UiState.Success<*> -> {
-                    val usuarios = (estado as UiState.Success<List<User>>).data
-                    LazyColumn(
-                        modifier = modifier.background(backgroundColor)
+                    val usuarios = (estado as UiState.Success<List<UserModel>>).data
+                    PullToRefreshBox(
+                        isRefreshing = refreshState.value,
+                        onRefresh = {
+                            refreshState.value = true
+                            coroutineScope.launch {
+                                onUpdateUsers()
+                                delay(1500)
+                                refreshState.value = false
+                            }
+                        },
                     ) {
-                        items(usuarios) { usuario ->
-                            UserCard(usuario = usuario, onClickUsuario = onClickUsuario)
+                        LazyColumn(
+                            modifier = modifier.fillMaxSize().background(backgroundColor)
+                        ) {
+                            items(usuarios) { usuario ->
+                                UserCard(usuario = usuario, onClickUsuario = onClickUsuario)
+                            }
                         }
                     }
                 }
@@ -129,7 +168,7 @@ fun PantallaUsuariosBody(
 }
 
 @Composable
-private fun UserCard(modifier: Modifier = Modifier, usuario: User, onClickUsuario: (User) -> Unit) {
+private fun UserCard(modifier: Modifier = Modifier, usuario: UserModel, onClickUsuario: (UserModel) -> Unit) {
     Column(
         modifier = modifier.padding(vertical = 12.dp).clickable{ onClickUsuario.invoke(usuario) }
     ) {
@@ -139,7 +178,7 @@ private fun UserCard(modifier: Modifier = Modifier, usuario: User, onClickUsuari
             verticalAlignment = Alignment.CenterVertically
         ) {
             Image(
-                painter = rememberAsyncImagePainter(usuario.picture.large),
+                painter = rememberAsyncImagePainter(usuario.image),
                 contentDescription = null,
                 modifier = modifier.size(64.dp).clip(CircleShape),
                 contentScale = ContentScale.Crop
@@ -147,8 +186,8 @@ private fun UserCard(modifier: Modifier = Modifier, usuario: User, onClickUsuari
             Column(
                 modifier = modifier.padding(start = 16.dp)
             ) {
-                Text(usuario.login.username, fontWeight = FontWeight.Bold)
-                Text("${usuario.name.first} ${usuario.name.last}")
+                Text(usuario.username, fontWeight = FontWeight.Bold)
+                Text(usuario.fullName)
             }
         }
         HorizontalDivider(thickness = 1.dp, color = Color.Gray)
@@ -164,7 +203,8 @@ private fun PantallaUsuariosPreview(
         PantallaUsuariosBody(
             name = "Yael",
             estado = state,
-            onClickUsuario = {}
+            onClickUsuario = {},
+            onUpdateUsers = {}
         )
     }
 }
@@ -175,8 +215,8 @@ class UserPreviewParameterProvider : PreviewParameterProvider<UiState> {
         UiState.Success(listOf(sampleUser1(), sampleUser2())),
         UiState.Error("Ocurrió un error al cargar los datos")
     )
-    private fun sampleUser1(): User {
-        return User(
+    private fun sampleUser1(): UserDTO {
+        return UserDTO(
             gender = "male",
             name = Name("Mr", "Juan", "Pérez"),
             location = Location(
@@ -212,8 +252,8 @@ class UserPreviewParameterProvider : PreviewParameterProvider<UiState> {
         )
     }
 
-    private fun sampleUser2(): User {
-        return User(
+    private fun sampleUser2(): UserDTO {
+        return UserDTO(
             gender = "female",
             name = Name("Ms", "Laura", "Gómez"),
             location = Location(

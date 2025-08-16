@@ -2,7 +2,6 @@ package com.example.myfirstcomposeapp.presentation.screens.userDetail.tabs
 
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,11 +16,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.myfirstcomposeapp.data.dto.User
+import com.example.myfirstcomposeapp.data.dto.UserDTO
 import androidx.core.net.toUri
+import com.example.myfirstcomposeapp.domain.models.UserModel
 
 @Composable
-fun ContactoTab(usuario: User, context: Context) {
+fun ContactoTab(usuario: UserModel, context: Context) {
     Column(
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.Start,
@@ -49,12 +49,12 @@ fun ContactoTab(usuario: User, context: Context) {
 
         TextButton(onClick = {
             val intent = Intent(Intent.ACTION_DIAL).apply {
-                data = "tel:${usuario.cell}".toUri()
+                data = "tel:${usuario.cellPhone}".toUri()
             }
             context.startActivity(intent)
         }) {
             Icon(Icons.Filled.Phone, null)
-            Text("Telefono celular: ${usuario.cell}")
+            Text("Telefono celular: ${usuario.cellPhone}")
         }
     }
 }

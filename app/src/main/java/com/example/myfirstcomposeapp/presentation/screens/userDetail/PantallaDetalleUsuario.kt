@@ -38,12 +38,13 @@ import com.example.myfirstcomposeapp.data.dto.Name
 import com.example.myfirstcomposeapp.data.dto.Picture
 import com.example.myfirstcomposeapp.data.dto.Street
 import com.example.myfirstcomposeapp.data.dto.Timezone
-import com.example.myfirstcomposeapp.data.dto.User
+import com.example.myfirstcomposeapp.data.dto.UserDTO
+import com.example.myfirstcomposeapp.domain.models.UserModel
 import com.example.myfirstcomposeapp.presentation.theme.AppTheme
 import kotlinx.coroutines.launch
 
 @Composable
-fun PantallaDetalleUsuario(modifier: Modifier = Modifier, usuario: User) {
+fun PantallaDetalleUsuario(modifier: Modifier = Modifier, usuario: UserModel) {
 
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
@@ -60,18 +61,18 @@ fun PantallaDetalleUsuario(modifier: Modifier = Modifier, usuario: User) {
         Spacer(modifier = modifier.padding(top = 32.dp))
 
         Image(
-            painter = rememberAsyncImagePainter(usuario.picture.large),
+            painter = rememberAsyncImagePainter(usuario.image),
             contentDescription = null,
             modifier = modifier.size(128.dp).clip(CircleShape),
             contentScale = ContentScale.Crop,
         )
 
         Text(
-            text = "${usuario.name.first} ${usuario.name.last}",
+            text = usuario.fullName,
             style = MaterialTheme.typography.titleLarge
         )
         Text(
-            text = "@${usuario.login.username}",
+            text = "@${usuario.username}",
             style = MaterialTheme.typography.bodyMedium
         )
 
@@ -110,47 +111,5 @@ fun PantallaDetalleUsuario(modifier: Modifier = Modifier, usuario: User) {
             }
         }
 
-    }
-}
-
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-private fun PantallaDetalleUsuarioPreview() {
-    AppTheme {
-        PantallaDetalleUsuario(usuario = User(
-            gender = "male",
-            name = Name("Mr", "Juan", "Pérez"),
-            location = Location(
-                street = Street(123, "Av. Siempre Viva"),
-                city = "Buenos Aires",
-                state = "Buenos Aires",
-                country = "Argentina",
-                postcode = "1000",
-                coordinates = Coordinates("-34.6037", "-58.3816"),
-                timezone = Timezone("-03:00", "Buenos Aires Time")
-            ),
-            email = "juan.perez@example.com",
-            login = LoginData(
-                uuid = "uuid-juan",
-                username = "juanp",
-                password = "password123",
-                salt = "salt",
-                md5 = "md5",
-                sha1 = "sha1",
-                sha256 = "sha256"
-            ),
-            dob = DataAge("1990-01-01", 34),
-            registered = DataAge("2015-05-10", 9),
-            phone = "1234567890",
-            cell = "0987654321",
-            id = ID(name = "DNI", value = "12345678"),
-            picture = Picture(
-                large = "https://randomuser.me/api/portraits/women/89.jpg",
-                medium = "https://randomuser.me/api/portraits/women/89.jpg",
-                thumbnail = "https://randomuser.me/api/portraits/women/89.jpg"
-            ),
-            nat = "AR"
-        )
-        )
     }
 }

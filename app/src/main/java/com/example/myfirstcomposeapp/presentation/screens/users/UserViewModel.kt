@@ -6,18 +6,18 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.myfirstcomposeapp.presentation.components.UiState
 import com.example.myfirstcomposeapp.data.api.ApiFactory
-import com.example.myfirstcomposeapp.data.dto.User
+import com.example.myfirstcomposeapp.data.db.UserDatabase
+import com.example.myfirstcomposeapp.data.dto.UserDTO
+import com.example.myfirstcomposeapp.data.repositories.LocalUserRepositoryImpl
 import com.example.myfirstcomposeapp.data.repositories.UserRepositoryImpl
+import com.example.myfirstcomposeapp.domain.models.UserModel
 import com.example.myfirstcomposeapp.domain.useCase.GetAllUsersUseCase
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-object UserContainer {
-    private val api = ApiFactory.getApiService()
-    val repository = UserRepositoryImpl(api)
-    val useCase = GetAllUsersUseCase(repository)
-}
 
 class UserViewModelFactory(private val useCase: GetAllUsersUseCase) : ViewModelProvider.Factory {
 
@@ -37,13 +37,15 @@ class UserViewModel(
     private val _uiState = MutableStateFlow<UiState>(UiState.Loading)
     val uiState: StateFlow<UiState> = _uiState
 
-    fun consultarUsuarios(){
+    fun consultarUsuarios(update: Boolean){
         Log.i("UserViewModel", "consultarUsuarios called")
         _uiState.value = UiState.Loading
         viewModelScope.launch {
             try {
-                val usuarios = getAllUsersUseCase()
-                _uiState.value = UiState.Success<List<User>>(usuarios)
+                val usuarios = withContext(Dispatchers.IO) {
+                    getAllUsersUseCase(update)
+                }
+                _uiState.value = UiState.Success<List<UserModel>>(usuarios)
             } catch (e: Exception) {
                 _uiState.value = UiState.Error("Error al cargar los usuarios: ${e.message}")
             }

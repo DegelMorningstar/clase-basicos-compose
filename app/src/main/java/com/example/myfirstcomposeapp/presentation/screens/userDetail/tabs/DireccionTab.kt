@@ -17,14 +17,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.example.myfirstcomposeapp.data.dto.User
+import com.example.myfirstcomposeapp.data.dto.UserDTO
+import com.example.myfirstcomposeapp.domain.models.UserModel
+import androidx.core.net.toUri
 
 @Composable
-fun DireccionTab(usuario: User, context: Context) {
-    val location = usuario.location
-    val direccion = "${location.street.name} ${location.street.number}, " +
-            "${location.city}, ${location.state}, ${location.country}, CP ${location.postcode}"
-
+fun DireccionTab(usuario: UserModel, context: Context) {
     Column(
         modifier = Modifier.fillMaxSize().padding(top = 32.dp, start = 16.dp, end = 16.dp),
         verticalArrangement = Arrangement.Top,
@@ -32,12 +30,12 @@ fun DireccionTab(usuario: User, context: Context) {
     ) {
         Text("Mi dirección es", color = Color.Gray)
         Spacer(modifier = Modifier.padding(top = 16.dp))
-        Text(direccion, fontWeight = Bold, textAlign = TextAlign.Center)
+        Text(usuario.address, fontWeight = Bold, textAlign = TextAlign.Center)
         Spacer(modifier = Modifier.padding(top = 16.dp))
         Button(onClick = {
-            val latitude = location.coordinates.latitude
-            val longitude = location.coordinates.longitude
-            val uri = Uri.parse("geo:$latitude,$longitude?q=${Uri.encode(direccion)}")
+            val latitude = usuario.latitude
+            val longitude = usuario.longitude
+            val uri = "geo:$latitude,$longitude?q=${Uri.encode(usuario.address)}".toUri()
             val intent = Intent(Intent.ACTION_VIEW, uri)
             context.startActivity(intent)
         }) {

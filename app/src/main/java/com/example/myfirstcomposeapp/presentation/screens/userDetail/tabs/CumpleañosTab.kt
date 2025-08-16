@@ -12,11 +12,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.example.myfirstcomposeapp.data.dto.User
+import com.example.myfirstcomposeapp.data.dto.UserDTO
+import com.example.myfirstcomposeapp.domain.models.UserModel
 import com.example.myfirstcomposeapp.util.formatToSimpleDate
 
 @Composable
-fun CumpleañosTab(usuario: User) {
+fun CumpleañosTab(usuario: UserModel) {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Top,
@@ -29,10 +30,10 @@ fun CumpleañosTab(usuario: User) {
         )
         Spacer(modifier = Modifier.padding(top = 16.dp))
         Text(
-            text = usuario.dob.date.formatToSimpleDate(),
+            text = usuario.birthday.formatToSimpleDate(),
             style = MaterialTheme.typography.titleLarge
         )
         Spacer(modifier = Modifier.padding(top = 16.dp))
-        Text("Tengo ${usuario.dob.age} años")
+        Text("Tengo ${usuario.age} años")
     }
 }

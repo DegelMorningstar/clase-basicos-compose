@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 
 data class UserListResponse (
-    val results: List<User>,
+    val results: List<UserDTO>,
     val info: Info
 )
 
@@ -16,7 +16,7 @@ data class Info (
 )
 
 @Serializable
-data class User (
+data class UserDTO (
     val gender: String,
     val name: Name,
     val location: Location,

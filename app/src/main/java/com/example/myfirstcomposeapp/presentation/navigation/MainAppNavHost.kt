@@ -9,7 +9,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.example.myfirstcomposeapp.presentation.screens.userDetail.PantallaDetalleUsuario
 import com.example.myfirstcomposeapp.presentation.screens.users.PantallaUsuarios
-import com.example.myfirstcomposeapp.data.dto.User
+import com.example.myfirstcomposeapp.data.dto.UserDTO
+import com.example.myfirstcomposeapp.domain.models.UserModel
 import com.example.myfirstcomposeapp.presentation.screens.login.LoginScreen
 import com.google.gson.Gson
 
@@ -48,7 +49,7 @@ fun MainAppNavHost(
             val args = backStackEntry.toRoute<DetailUser>()
             val decodedJson = Uri.decode(args.userJson)
             val gson = Gson()
-            val user = gson.fromJson(decodedJson, User::class.java)
+            val user = gson.fromJson(decodedJson, UserModel::class.java)
             PantallaDetalleUsuario(usuario = user)
         }
     }
