@@ -41,9 +41,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
-import com.example.myfirstcomposeapp.data.api.ApiFactory
 import com.example.myfirstcomposeapp.data.db.UserDatabase
 import com.example.myfirstcomposeapp.presentation.components.UiState
 import com.example.myfirstcomposeapp.data.dto.Coordinates
@@ -70,15 +70,9 @@ import kotlinx.coroutines.launch
 fun PantallaUsuarios(
     modifier: Modifier = Modifier,
     name: String,
-    onClickUsuario: (UserModel) -> Unit
+    onClickUsuario: (UserModel) -> Unit,
+    viewModel: UserViewModel = hiltViewModel()
 ) {
-    val context = LocalContext.current
-    val api = remember { ApiFactory.getApiService() }
-    val db = remember { UserDatabase.getInstance(context = context) }
-    val remoteRepository = remember { UserRepositoryImpl(api) }
-    val localRepository = remember { LocalUserRepositoryImpl(db) }
-    val useCase = remember { GetAllUsersUseCase(remoteRepository,localRepository) }
-    val viewModel: UserViewModel = viewModel(factory = UserViewModelFactory(useCase))
 
     LaunchedEffect(true) {
         viewModel.consultarUsuarios(false)

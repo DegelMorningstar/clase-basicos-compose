@@ -25,6 +25,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.rememberAsyncImagePainter
 import com.example.myfirstcomposeapp.presentation.screens.userDetail.tabs.ContactoTab
 import com.example.myfirstcomposeapp.presentation.screens.userDetail.tabs.CumpleañosTab
@@ -40,11 +41,12 @@ import com.example.myfirstcomposeapp.data.dto.Street
 import com.example.myfirstcomposeapp.data.dto.Timezone
 import com.example.myfirstcomposeapp.data.dto.UserDTO
 import com.example.myfirstcomposeapp.domain.models.UserModel
+import com.example.myfirstcomposeapp.presentation.screens.users.UserViewModel
 import com.example.myfirstcomposeapp.presentation.theme.AppTheme
 import kotlinx.coroutines.launch
 
 @Composable
-fun PantallaDetalleUsuario(modifier: Modifier = Modifier, usuario: UserModel) {
+fun PantallaDetalleUsuario(modifier: Modifier = Modifier, usuario: UserModel, ) {
 
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()

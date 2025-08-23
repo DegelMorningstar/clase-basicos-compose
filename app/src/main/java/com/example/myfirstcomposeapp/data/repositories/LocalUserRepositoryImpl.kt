@@ -2,16 +2,18 @@ package com.example.myfirstcomposeapp.data.repositories
 
 import android.util.Log
 import com.example.myfirstcomposeapp.data.db.UserDatabase
+import com.example.myfirstcomposeapp.data.db.dao.UserDao
 import com.example.myfirstcomposeapp.data.db.entities.UserEntity
 import com.example.myfirstcomposeapp.data.dto.UserDTO
 import com.example.myfirstcomposeapp.data.mapper.fromDTOtoEntity
 import com.example.myfirstcomposeapp.domain.repositories.LocalUserRepository
+import javax.inject.Inject
 
-class LocalUserRepositoryImpl(private val db:UserDatabase): LocalUserRepository {
+class LocalUserRepositoryImpl @Inject constructor(private val dao: UserDao): LocalUserRepository {
 
     override suspend fun getAllUsers(): List<UserEntity> {
         Log.i("LocalUserRepository", "Fetching users from local database")
-        return db.userDao().getAll()
+        return dao.getAll()
     }
 
     override suspend fun saveUsers(userDTOS: List<UserDTO>) {
@@ -20,7 +22,7 @@ class LocalUserRepositoryImpl(private val db:UserDatabase): LocalUserRepository 
             Log.i("LocalUserRepository", "Converting UserDTO to UserEntity")
             user.fromDTOtoEntity()
         }
-        db.userDao().insertAll(listUsers)
+        dao.insertAll(listUsers)
     }
 
 }

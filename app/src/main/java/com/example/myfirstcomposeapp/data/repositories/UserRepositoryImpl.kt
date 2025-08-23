@@ -4,8 +4,11 @@ import android.util.Log
 import com.example.myfirstcomposeapp.data.dto.UserDTO
 import com.example.myfirstcomposeapp.data.api.UsersApi
 import com.example.myfirstcomposeapp.domain.repositories.UserRepository
+import javax.inject.Inject
 
-class UserRepositoryImpl(private val api: UsersApi) : UserRepository {
+class UserRepositoryImpl @Inject constructor(
+    private val api: UsersApi
+) : UserRepository {
 
     override suspend fun obtenerTodosLosUsuarios():List<UserDTO> {
         Log.i("UserRepositoryImpl", "Fetching all users from remote API")

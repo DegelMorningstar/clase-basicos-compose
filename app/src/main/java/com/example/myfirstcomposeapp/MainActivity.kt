@@ -11,16 +11,21 @@ import com.example.myfirstcomposeapp.data.repositories.PreferencesRepositoryImpl
 import com.example.myfirstcomposeapp.data.repositories.PreferencesRepositoryImpl.Companion.PREF_INSTANCE
 import com.example.myfirstcomposeapp.data.repositories.PreferencesRepositoryImpl.Companion.PREF_LOGIN_STATE
 import com.example.myfirstcomposeapp.data.repositories.PreferencesRepositoryImpl.Companion.PREF_NAME
+import com.example.myfirstcomposeapp.domain.repositories.PreferencesRepository
 import com.example.myfirstcomposeapp.presentation.navigation.MainAppNavHost
 import com.example.myfirstcomposeapp.presentation.theme.AppTheme
+import com.example.myfirstcomposeapp.util.AES
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    @Inject lateinit var repository: PreferencesRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.i("MainActivity", "onCreate called")
-        val preferences = getSharedPreferences(PREF_INSTANCE, MODE_PRIVATE)
-        val repository = PreferencesRepositoryImpl(preferences)
         val loginState : Boolean = repository.getLoginState()
         val userName : String = repository.getName()
         enableEdgeToEdge()

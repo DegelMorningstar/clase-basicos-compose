@@ -3,8 +3,9 @@ package com.example.myfirstcomposeapp.data.repositories
 import android.content.SharedPreferences
 import com.example.myfirstcomposeapp.domain.repositories.PreferencesRepository
 import androidx.core.content.edit
+import javax.inject.Inject
 
-class PreferencesRepositoryImpl(
+class PreferencesRepositoryImpl @Inject constructor(
     private val sharedPreferences: SharedPreferences
 ): PreferencesRepository {
 

@@ -37,12 +37,12 @@ fun MainAppNavHost(
 
         composable<Users> { backStackEntry ->
             val users: Users = backStackEntry.toRoute()
-            PantallaUsuarios(name = users.name) { user ->
+            PantallaUsuarios(name = users.name, onClickUsuario = { user ->
                 val jsonString = Gson().toJson(user)
                 val encodedJson = Uri.encode(jsonString)
                 navHostController.navigate(DetailUser(userJson = encodedJson))
 
-            }
+            })
         }
 
         composable<DetailUser> { backStackEntry ->

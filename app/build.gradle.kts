@@ -4,6 +4,8 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     kotlin("plugin.serialization") version "2.0.21"
     id("kotlin-kapt")
+    //id("com.android.application")
+    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -39,11 +41,25 @@ android {
     buildFeatures {
         compose = true
     }
+    kapt {
+        correctErrorTypes = true
+    }
 }
 
 dependencies {
     val nav_version = "2.9.2"
     val room_version = "2.7.2"
+
+    implementation("com.google.dagger:hilt-android:2.57.1")
+    annotationProcessor("com.google.dagger:hilt-compiler:2.57.1")
+    androidTestImplementation("com.google.dagger:hilt-android-testing:2.57.1")
+    androidTestAnnotationProcessor("com.google.dagger:hilt-compiler:2.57.1")
+    testImplementation("com.google.dagger:hilt-android-testing:2.57.1")
+    testAnnotationProcessor("com.google.dagger:hilt-compiler:2.57.1")
+    kapt("com.google.dagger:hilt-compiler:2.57.1")
+    kaptTest("com.google.dagger:hilt-compiler:2.57.1")
+    kaptAndroidTest("com.google.dagger:hilt-compiler:2.57.1")
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
 
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
 

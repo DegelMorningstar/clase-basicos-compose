@@ -5,32 +5,22 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.myfirstcomposeapp.presentation.components.UiState
-import com.example.myfirstcomposeapp.data.api.ApiFactory
 import com.example.myfirstcomposeapp.data.db.UserDatabase
 import com.example.myfirstcomposeapp.data.dto.UserDTO
 import com.example.myfirstcomposeapp.data.repositories.LocalUserRepositoryImpl
 import com.example.myfirstcomposeapp.data.repositories.UserRepositoryImpl
 import com.example.myfirstcomposeapp.domain.models.UserModel
 import com.example.myfirstcomposeapp.domain.useCase.GetAllUsersUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-
-class UserViewModelFactory(private val useCase: GetAllUsersUseCase) : ViewModelProvider.Factory {
-
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if(modelClass.isAssignableFrom(UserViewModel::class.java)){
-            @Suppress("UNCHECKED_CAST")
-            return UserViewModel(useCase) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
-    }
-}
-
-class UserViewModel(
+@HiltViewModel
+class UserViewModel @Inject constructor(
     private val getAllUsersUseCase: GetAllUsersUseCase
 ) : ViewModel() {
 

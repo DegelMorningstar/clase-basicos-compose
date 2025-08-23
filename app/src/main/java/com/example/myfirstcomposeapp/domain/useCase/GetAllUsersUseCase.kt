@@ -8,8 +8,9 @@ import com.example.myfirstcomposeapp.data.mapper.fromEntitytoDomain
 import com.example.myfirstcomposeapp.domain.models.UserModel
 import com.example.myfirstcomposeapp.domain.repositories.LocalUserRepository
 import com.example.myfirstcomposeapp.domain.repositories.UserRepository
+import javax.inject.Inject
 
-class GetAllUsersUseCase(
+class GetAllUsersUseCase @Inject constructor(
     private val remoteUserRepository: UserRepository,
     private val localUserRepository: LocalUserRepository
 ) {

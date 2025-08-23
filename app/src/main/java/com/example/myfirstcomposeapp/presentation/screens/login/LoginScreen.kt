@@ -1,7 +1,5 @@
 package com.example.myfirstcomposeapp.presentation.screens.login
 
-import android.content.Context
-import android.content.SharedPreferences
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -18,32 +16,24 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.myfirstcomposeapp.R
-import com.example.myfirstcomposeapp.data.repositories.PreferencesRepositoryImpl
-import com.example.myfirstcomposeapp.data.repositories.PreferencesRepositoryImpl.Companion.PREF_INSTANCE
 import com.example.myfirstcomposeapp.presentation.theme.backgroundColor
 import com.example.myfirstcomposeapp.presentation.theme.primaryOrange
 
 @Composable
 fun LoginScreen(
-    onEnterClick: (String) -> Unit
+    onEnterClick: (String) -> Unit,
+    viewModel: LoginViewModel = hiltViewModel()
 ) {
-    val context = LocalContext.current
-    val preferences: SharedPreferences = remember { context.getSharedPreferences(PREF_INSTANCE, Context.MODE_PRIVATE) }
-    val repository = remember { PreferencesRepositoryImpl(preferences) }
-    val viewModel: LoginViewModel = viewModel(factory = LoginViewModelFactory(repository))
-
     Column(
         modifier = Modifier
             .fillMaxSize()
